@@ -1,0 +1,14 @@
+<div class="configuration-container">
+  <label>Number of displayed factories
+    <input type="number" placeholder="Set number of factories" #numberOfPlants>
+  </label>
+  <label>Specify the number of plants before filtering
+    <input [(ngModel)]="numberOfPlantsByFilter">
+  </label>
+</div>
+
+<ng-template #mapContainer [ngIf]="isMapShow">
+  <div style="max-width: 700px">
+    <div id="map"></div>
+  </div>
+</ng-template>
