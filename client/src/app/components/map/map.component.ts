@@ -2,6 +2,7 @@ import {
   Component,
   OnInit,
   AfterViewInit,
+  OnDestroy,
   ViewChild,
   ElementRef,
 } from '@angular/core';
@@ -10,6 +11,8 @@ import {
   distinctUntilChanged,
   filter,
   fromEvent,
+  Subscription,
+  take,
   tap,
 } from 'rxjs';
 
@@ -25,11 +28,12 @@ declare const simplemaps_usmap: any;
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent implements OnInit, AfterViewInit {
+export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('numberOfPlants') numberOfPlants?: ElementRef;
   isMapShow = true;
   numberOfPlantsByFilter = 15;
   matData = getInitMapData;
+  subscription?: Subscription;
 
   constructor(
     private readonly plantService: PlantsService,
@@ -37,13 +41,16 @@ export class MapComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.statesService.getStates().subscribe((states) => {
-      states.forEach((state) => {
-        this.matData.state_specific[
-          state.stateAbbreviation
-        ].description = `Net Generation: ${state.netGeneration} MWh, percentage: ${state.percentage}%`;
+    this.statesService
+      .getStates()
+      .pipe(take(1))
+      .subscribe((states) => {
+        states.forEach((state) => {
+          this.matData.state_specific[
+            state.stateAbbreviation
+          ].description = `Net Generation: ${state.netGeneration} MWh, Percentage: ${state.percentage}%`;
+        });
       });
-    });
 
     simplemaps_usmap.hooks.back = () => {
       this.matData.locations = [];
@@ -55,9 +62,11 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    fromEvent(this.numberOfPlants?.nativeElement, 'keyup')
+    const numberOfPlantsKeyUp$ = fromEvent(
+      this.numberOfPlants?.nativeElement,
+      'keyup'
+    )
       .pipe(
-        filter(Boolean),
         debounceTime(750),
         distinctUntilChanged(),
         tap(() => {
@@ -65,22 +74,30 @@ export class MapComponent implements OnInit, AfterViewInit {
         })
       )
       .subscribe();
+    this.subscription?.add(numberOfPlantsKeyUp$);
+  }
+
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
   }
 
   private getPlants(numberOfPlants: number, size: number, id = '') {
-    this.plantService.getPlants(numberOfPlants, id).subscribe((plants) => {
-      this.matData.locations = plants.map((plant: Plant, i: number) => ({
-        name: plant.plantName,
-        lat: plant.latitude,
-        lng: plant.longitude,
-        description: `Net Generation: ${plant.netGeneration} MWh, percentage: ${plant.percentage}%`,
-        color: 'default',
-        zoomable: 'yes',
-        type: 'default',
-        size: size,
-      }));
-      this.refreshMap();
-    });
+    this.plantService
+      .getPlants(numberOfPlants, id)
+      .pipe(take(1))
+      .subscribe((plants) => {
+        this.matData.locations = plants.map((plant: Plant, i: number) => ({
+          name: plant.plantName,
+          lat: plant.latitude,
+          lng: plant.longitude,
+          description: `Net Generation: ${plant.netGeneration} MWh, Percentage: ${plant.percentage}%`,
+          color: 'default',
+          zoomable: 'yes',
+          type: 'default',
+          size: size,
+        }));
+        this.refreshMap();
+      });
   }
 
   private refreshMap() {
