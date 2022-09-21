@@ -6,13 +6,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { PlantData } from '../../schemas/plant-data.schema';
-import { PlantDataService } from './plant-data.service';
+import { Plant } from '../../schemas/plant.schema';
+import { PlantService } from './plant.service';
 
-@ApiTags('Plant data')
-@Controller('plant-data')
-export class PlantDataController {
-  constructor(private readonly service: PlantDataService) {}
+@ApiTags('Plant')
+@Controller('plant')
+export class PlantController {
+  constructor(private readonly service: PlantService) {}
 
   @ApiOperation({
     description: 'Get sorted list of plants',
@@ -20,7 +20,7 @@ export class PlantDataController {
   })
   @ApiOkResponse({
     description: 'Sorted list of Plants',
-    type: [PlantData],
+    type: [Plant],
   })
   @ApiQuery({
     name: 'limit',

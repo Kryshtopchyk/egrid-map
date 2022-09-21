@@ -13,6 +13,6 @@ export class StatesService {
   constructor(private readonly http: HttpClient) {}
 
   getStates(): Observable<State[]> {
-    return this.http.get<State[]>(`${this.routeURL}/state-data`);
+    return this.http.get<State[]>(`${this.routeURL}/state`);
   }
 }

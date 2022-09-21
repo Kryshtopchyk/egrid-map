@@ -2,21 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { StateData, StateDataDocument } from '../../schemas';
+import { State, StateDocument } from '../../schemas';
 
 @Injectable()
-export class StateDataDal {
+export class StateDal {
   constructor(
-    @InjectModel(StateData.name)
-    private model: Model<StateDataDocument>,
+    @InjectModel(State.name)
+    private model: Model<StateDocument>,
   ) {}
 
   findAll() {
-    console.log('qwe');
     return this.model.find().exec();
   }
 
-  insert(docs: StateData[]) {
+  insert(docs: State[]) {
     return this.model.insertMany(docs);
   }
 

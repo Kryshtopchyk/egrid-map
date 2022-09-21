@@ -3,19 +3,19 @@ import { Injectable } from '@nestjs/common';
 import * as xlsx from 'xlsx';
 import { WorkBook, WorkSheet } from 'xlsx';
 import { ReadStream } from 'fs';
-
-import { StateDataDal } from './state-data.dal';
 import { lastValueFrom } from 'rxjs';
 
+import { PlantDal } from './plant.dal';
+
 @Injectable()
-export class StateDataService {
+export class PlantService {
   constructor(
     private httpService: HttpService,
-    private readonly dal: StateDataDal,
+    private readonly dal: PlantDal,
   ) {}
 
-  getAll() {
-    return this.dal.findAll();
+  getAll(limit: number, state: string) {
+    return this.dal.findAll(limit, state);
   }
 
   async populate() {
@@ -42,24 +42,29 @@ export class StateDataService {
       stream.on('error', (error) => reject(error));
     });
 
-    const sheet: WorkSheet = wb.Sheets[wb.SheetNames[4]];
+    const sheet: WorkSheet = wb.Sheets[wb.SheetNames[3]];
     const range = xlsx.utils.decode_range(sheet['!ref']);
-    const statesData = [];
+    const plants = [];
     let general = 0;
 
     for (let R = range.s.r + 2; R <= range.e.r; ++R) {
-      const netGeneration = sheet[xlsx.utils.encode_cell({ c: 8, r: R })]?.v;
+      const netGeneration =
+        sheet[xlsx.utils.encode_cell({ c: 39, r: R })]?.v || 0;
       general += netGeneration;
-      const stateData = {
-        stateAbbreviation: sheet[xlsx.utils.encode_cell({ c: 1, r: R })]?.v,
+      const plant = {
+        plantName: sheet[xlsx.utils.encode_cell({ c: 3, r: R })]?.v,
+        plantStateAbbreviation:
+          sheet[xlsx.utils.encode_cell({ c: 2, r: R })]?.v,
         netGeneration,
+        latitude: sheet[xlsx.utils.encode_cell({ c: 19, r: R })]?.v,
+        longitude: sheet[xlsx.utils.encode_cell({ c: 20, r: R })]?.v,
       };
-      statesData.push(stateData);
+      plants.push(plant);
     }
     this.dal.insert(
-      statesData.map((stateData) => ({
-        ...stateData,
-        percentage: ((stateData.netGeneration * 100) / general).toFixed(6),
+      plants.map((plant) => ({
+        ...plant,
+        percentage: ((plant.netGeneration * 100) / general).toFixed(6),
       })),
     );
     return 'populated';

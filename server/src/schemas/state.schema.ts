@@ -4,10 +4,10 @@ import { Document, SchemaTypes, Types } from 'mongoose';
 
 import { SchemaName } from '../constants';
 
-export type PlantDataDocument = PlantData & Document;
+export type StateDocument = State & Document;
 
-@Schema({ collection: SchemaName.plantsData })
-export class PlantData {
+@Schema({ collection: SchemaName.states })
+export class State {
   @ApiProperty({
     description: 'Id',
     example: '620d43c901c7e41a00e2046a',
@@ -16,18 +16,11 @@ export class PlantData {
   _id: Types.ObjectId;
 
   @ApiProperty({
-    description: 'Plant Name',
-    example: 'Some kind of plant',
-  })
-  @Prop()
-  plantName: string;
-
-  @ApiProperty({
-    description: 'Plant State Abbreviation',
+    description: 'State Abbreviation',
     example: 'AI',
   })
   @Prop()
-  plantStateAbbreviation: string;
+  stateAbbreviation: string;
 
   @ApiProperty({
     description: 'Net Generation',
@@ -42,20 +35,6 @@ export class PlantData {
   })
   @Prop()
   percentage: number;
-
-  @ApiProperty({
-    description: 'Latitude',
-    example: '10',
-  })
-  @Prop()
-  latitude: number;
-
-  @ApiProperty({
-    description: 'Longitude',
-    example: '-10',
-  })
-  @Prop()
-  longitude: number;
 }
 
-export const PlantDataSchema = SchemaFactory.createForClass(PlantData);
+export const StateSchema = SchemaFactory.createForClass(State);

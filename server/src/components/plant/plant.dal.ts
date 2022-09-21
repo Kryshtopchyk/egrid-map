@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { PlantData, PlantDataDocument } from '../../schemas';
+import { Plant, PlantDocument } from '../../schemas';
 
 @Injectable()
-export class PlantDataDal {
+export class PlantDal {
   constructor(
-    @InjectModel(PlantData.name)
-    private model: Model<PlantDataDocument>,
+    @InjectModel(Plant.name)
+    private model: Model<PlantDocument>,
   ) {}
 
   findAll(limit: number, state: string = '') {
@@ -19,7 +19,7 @@ export class PlantDataDal {
       .exec();
   }
 
-  insert(docs: PlantData[]) {
+  insert(docs: Plant[]) {
     return this.model.insertMany(docs);
   }
 

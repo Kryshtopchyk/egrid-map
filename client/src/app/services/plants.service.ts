@@ -14,7 +14,7 @@ export class PlantsService {
 
   getPlants(limit: number, state = ''): Observable<Plant[]> {
     return this.http.get<Plant[]>(
-      `${this.routeURL}/plant-data?limit=${limit}&state=${state}`
+      `${this.routeURL}/plant?limit=${limit}&state=${state}`
     );
   }
 }

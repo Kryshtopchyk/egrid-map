@@ -1,4 +1,4 @@
 export enum SchemaName {
-  statesData = 'states-data',
-  plantsData = 'plants-data',
+  states = 'states',
+  plants = 'plants',
 }

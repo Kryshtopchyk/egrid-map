@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { PlantDataModule } from './plant-data/plant-data.module';
-import { StateDataModule } from './state-data/state-data.module';
+import { PlantModule } from './plant/plant.module';
+import { StateModule } from './state/state.module';
 
 @Module({
-  imports: [StateDataModule, PlantDataModule],
+  imports: [StateModule, PlantModule],
 })
 export class ComponentsModule {}

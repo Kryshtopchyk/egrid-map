@@ -1,6 +1,6 @@
 import { MapData } from '../types';
 
-export const getInitExportData: MapData = {
+export const getInitMapData: MapData = {
   main_settings: {
     //General settings
     width: 'responsive', //or 'responsive'

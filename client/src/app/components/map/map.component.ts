@@ -16,7 +16,7 @@ import {
 import { PlantsService } from '../../services/plants.service';
 import { StatesService } from '../../services/states.service';
 import { Plant } from '../../types';
-import { getInitExportData } from '../../utils';
+import { getInitMapData } from '../../utils';
 
 declare const simplemaps_usmap: any;
 
@@ -29,7 +29,7 @@ export class MapComponent implements OnInit, AfterViewInit {
   @ViewChild('numberOfPlants') numberOfPlants?: ElementRef;
   isMapShow = true;
   numberOfPlantsByFilter = 15;
-  matData = getInitExportData;
+  matData = getInitMapData;
 
   constructor(
     private readonly plantService: PlantsService,
@@ -37,8 +37,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.matData = getInitExportData;
-
     this.statesService.getStates().subscribe((states) => {
       states.forEach((state) => {
         this.matData.state_specific[
@@ -60,7 +58,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     fromEvent(this.numberOfPlants?.nativeElement, 'keyup')
       .pipe(
         filter(Boolean),
-        debounceTime(150),
+        debounceTime(750),
         distinctUntilChanged(),
         tap(() => {
           this.getPlants(this.numberOfPlants?.nativeElement.value, 12);
