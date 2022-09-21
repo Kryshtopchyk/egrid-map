@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    image: krishtopchik123/egrid-map-client
+    build:
+      context: ./client
+    ports:
+      - '80:80'
+  server:
+    image: krishtopchik123/egrid-map-server
+    build:
+      context: ./server
+    ports:
+      - '4000:4000'
